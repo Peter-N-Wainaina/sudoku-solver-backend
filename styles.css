@@ -1,0 +1,56 @@
+/* styles.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #463a3a;
+}
+
+.sudoku-board {
+    border: 3px solid #333;
+    display: table;
+}
+
+.sudoku-board div {
+    display: table-row;
+}
+
+.sudoku-board input {
+    display: table-cell;
+    border: 1px solid #666;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 20px;
+    box-sizing: border-box;
+}
+
+.sudoku-board input:focus {
+    outline: none;
+    background-color: lightyellow;
+}
+
+
+/* Styling for every 3rd row and column to indicate 3x3 subgrids more clearly */
+.sudoku-board input:nth-child(3n) {
+    border-right: 3px solid #333;
+}
+
+.sudoku-board div:nth-child(3n) input {
+    border-bottom: 3px solid #333;
+}
+
+
+/* Additional styles for the button */
+button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #c9a6a6;
+}
