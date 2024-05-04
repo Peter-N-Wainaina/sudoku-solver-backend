@@ -3,6 +3,9 @@ This  module contains poc code for a sudoku solver
 """
 
 import numpy as np
+from copy import deepcopy
+from random import shuffle
+
 #NOTE:The contents of the file are lines of tuples (i,j,k) separated by a comma 
      #where i and j are valid indices on the board, with a valid value as k.
 
@@ -110,9 +113,9 @@ def get_board_moves(board):
     board_moves = []
     for i in range(b_size):
         for j in range(b_size):
-            if board[i][j] is not None:
+            if board[i][j] is None:
                 cell_moves = get_cell_moves((i,j), board)
-                if cell_moves == {}: #Meaning a non-none cell has no possible moves
+                if cell_moves == {}: # Meaning a None cell has no possible moves
                     return []  #TODO:Refactor to make another function responsible for this
                 for move in cell_moves:
                     board_moves.append((i,j,move))
@@ -120,12 +123,18 @@ def get_board_moves(board):
     return board_moves
 
 def make_move(board,move):
+    # b = deepcopy(board)
+    b = board
     i,j = move[0], move[1]
-    board[i][j] = move[2]
+    b[i][j] = move[2]
+    return b
 
 def undo_move(board,move):
-    i,j = move[0], move[1]
-    board[i][j] = None
+    b = board
+    # b = deepcopy(board)
+    i,j = move[0], move[1] 
+    b[i][j] = None
+    return b
 
 def solve_sudoku(board):
     """
@@ -136,20 +145,15 @@ def solve_sudoku(board):
         return board
     
     moves = get_board_moves(board)
-    print(moves)
     if moves == []:
         return None
-    # print(moves)
-    # print(board)
+
     for move in moves:
-        print(board)
-        make_move(board, move)
-        print(board)
-        new_board = solve_sudoku(board)
-        if new_board is not None:
-            return new_board
+        b = make_move(board, move)
+        if solve_sudoku(b) is not None:
+            return b
         else:
-            undo_move(board, move)
+            undo_move(b, move)
     
     return None #should never get here
 
@@ -161,34 +165,12 @@ def solve_sudoku(board):
 board_file = "./test.txt"
 #init_board = create_board_from_file(board_file,9)
 
-three_by_three = [[1, 2, 3],
-                 [2, 3, None],
-                 [3, 1, None]]
+three_by_three = [[3, 2, None],
+                 [None, None, 2],
+                 [None, 1, None]]
 #board_moves = get_board_moves(three_by_three)
 
 if __name__ == "__main__":
-    # print("Initial board\n")
-    # print_board(init_board)
-    # print(is_solved(init_board))
     print("three by three")
-    #print(three_by_three)
-
-
-    print(solve_sudoku(three_by_three))
-    print(get_board_moves(three_by_three))
-
-    #print(three_by_three)
-
-    # make_move(three_by_three, (1,0,2))
-    # print(three_by_three)
-    # undo_move(three_by_three, (1,0,2))
-    # print(three_by_three)
-    #(is_solved(three_solved))
-
-
-
-
-#three_solved = [[1, 2, 3], 
-#                 [2, 3, 1],
-#                 [3, 1, 2]
-#                 ]
+    print("Initial Board", three_by_three)
+    print("Final Board", solve_sudoku(three_by_three))
