@@ -31,7 +31,7 @@ assert valid_1.possible_moves() == []
 assert valid_1._get_box((0,3)) == 1
 assert valid_1._get_box((8,7)) == 8
 assert valid_1._get_box((5,5)) == 4
-
+assert valid_1.is_solved()
 
 valid_2 = create_board_from_file("data/valid_board_2.txt", 9)
 valid_2 = sudoku.Sudoku(valid_2, (3,3))
@@ -51,3 +51,4 @@ assert compare_lists(box, valid_2.box_bags[8])
 valid_2.undo_move((0,0,5))
 moves = valid_2.possible_moves()
 assert  compare_lists(moves, [ (8,7,7), (0,0,5), (5,5,4)])
+assert not valid_2.is_solved()

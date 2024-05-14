@@ -29,7 +29,7 @@ class Sudoku(object):
         r, c = cell
         boxes_across = self.size / self.box_width
         boxes_down = self.size / self.box_height
-        return int((floor(r / boxes_down)) * boxes_across) + floor(c / boxes_across)
+        return int((floor(r / boxes_down)) * boxes_across) + floor(c / boxes_across) #We first get the layer of boxes the cell is in, then how deep into the layer it is.
 
     def _fill_bags(self):
         for row in range(self.size):
@@ -60,7 +60,9 @@ class Sudoku(object):
         return pos_moves
     
     def make_move(self, move):
-        i, j, k = move
+        i, j, k = move 
+        assert self.board[i][j] is None  
+
         self.board[i][j] = k
         b_idx = self._get_box((i,j))
         self.row_bags[i].add(k)
@@ -69,6 +71,8 @@ class Sudoku(object):
 
     def undo_move(self, move):
         i, j, k = move 
+        assert self.board[i][j] is not None 
+
         self.board[i][j] = None
         b_idx = self._get_box((i,j))
         self.row_bags[i].remove(k)
@@ -79,8 +83,15 @@ class Sudoku(object):
         """
         Returns True if board is solved 
         """
-        raise NotImplemented
-    
+        #Main Insight: If board is full, all bags (row, col or box)
+        #are of length SIZE, then it is solved. This assumes that 
+        #it was filled correctly to beging with. 
+        for bag in self.col_bags:
+            if len(bag) != self.size:
+                return False
+        return True
+
+
     def solve(self):
         """
         Solves self.board
