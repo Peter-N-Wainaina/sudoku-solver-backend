@@ -52,3 +52,12 @@ valid_2.undo_move((0,0,5))
 moves = valid_2.possible_moves()
 assert  compare_lists(moves, [ (8,7,7), (0,0,5), (5,5,4)])
 assert not valid_2.is_solved()
+
+
+assert valid_2.solve() is not None
+valid_3 = create_board_from_file("data/valid_board_2.txt", 9)
+valid_3 = sudoku.Sudoku(valid_3, (3,3))
+valid_3.make_move((8,7,7))
+valid_3.make_move((8,8,9))
+valid_3.make_move((5,5,4))
+assert valid_3.board == valid_2.board
