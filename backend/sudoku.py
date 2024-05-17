@@ -85,7 +85,7 @@ class Sudoku(object):
         """
         #Main Insight: If board is full, all bags (row, col or box)
         #are of length SIZE, then it is solved. This assumes that 
-        #it was filled correctly to beging with. 
+        #it was filled correctly to begin with. 
         for bag in self.col_bags:
             if len(bag) != self.size:
                 return False
@@ -96,7 +96,14 @@ class Sudoku(object):
         """
         Solves self.board
         """
-        raise NotImplemented
+        if self.is_solved():
+            return self.board
+
+        pos_moves = self.possible_moves()
+        if  pos_moves == []:
+            return None
+        
+        raise NotImplementedError
 
     def _is_valid_board(self, board, box_dims):
         """
