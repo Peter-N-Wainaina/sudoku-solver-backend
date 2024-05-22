@@ -14,7 +14,7 @@ class Sudoku(object):
         if self._is_valid_board(board, box_dims): #TODO:Maybe change to a try block 
             self.board = board
             self.size = len(board)
-            self.box_height, self.box_width = box_dims
+            self.box_width,self.box_height = box_dims
             self.row_bags = [set() for _ in range(self.size)]
             self.col_bags = [set() for _ in range( self.size)] 
             self.box_bags = [set() for _ in range ( int((self.size / self.box_height) * (self.size / self.box_width)))]  
@@ -23,6 +23,9 @@ class Sudoku(object):
             raise self.InvalidBoard
         
     class InvalidBoard(Exception):
+        pass
+
+    class UnsolvableBoard(Exception):
         pass
 
     def _get_box(self, cell):
@@ -50,13 +53,14 @@ class Sudoku(object):
         pos_moves = []
         for row in range(self.size):
             for col in range(self.size):
-                box = self._get_box((row, col))
-                r_bag = self.row_bags[row] 
-                c_bag = self.col_bags[col]
-                b_bag = self.box_bags[box]
-                cell_moves = valid_moves - (r_bag | c_bag | b_bag)
-                for move in cell_moves:
-                    pos_moves.append((row, col, move))
+                if self.board[row][col] is None:
+                    box = self._get_box((row, col))
+                    r_bag = self.row_bags[row] 
+                    c_bag = self.col_bags[col]
+                    b_bag = self.box_bags[box]
+                    cell_moves = valid_moves - (r_bag | c_bag | b_bag)
+                    for move in cell_moves:
+                        pos_moves.append((row, col, move))
         return pos_moves
     
     def make_move(self, move):
@@ -85,8 +89,8 @@ class Sudoku(object):
         """
         #Main Insight: If board is full, all bags (row, col or box)
         #are of length SIZE, then it is solved. This assumes that 
-        #it was filled correctly to begin with. 
-        for bag in self.col_bags:
+        #it was filled correctly to beging with. 
+        for bag in self.col_bags: # can also check row, or box
             if len(bag) != self.size:
                 return False
         return True
@@ -98,12 +102,18 @@ class Sudoku(object):
         """
         if self.is_solved():
             return self.board
-
-        pos_moves = self.possible_moves()
-        if  pos_moves == []:
+        
+        moves = self.possible_moves()
+        if moves == []:
             return None
         
-        raise NotImplementedError
+        for move in moves:
+            self.make_move(move)
+            if self.solve() is not None:
+                return self.board
+            self.undo_move()
+        return None
+
 
     def _is_valid_board(self, board, box_dims):
         """
